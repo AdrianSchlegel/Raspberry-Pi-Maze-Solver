@@ -11,7 +11,7 @@ This project is a simple yet captivating program designed to generate and solve 
 
 ## Getting Started
 
-1. **Clone the Repository**: `git clone https://your-repo-link-here`
+1. **Clone the Repository**: `git clone https://github.com/AdrianSchlegel/Raspberry-Pi-Maze-Solver.git`
 2. **Install Dependencies**: Run the setup script to automatically install required packages.
 3. **Run the Program**: Launch it and start solving mazes!
 
