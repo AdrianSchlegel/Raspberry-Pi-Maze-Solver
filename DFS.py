@@ -3,6 +3,7 @@ import pygame
 import random
 import sys
 
+
 def color_walls(cell, cell_array, color, screen):
     if not cell.left_wall:
         if cell_array[cell.index-1].searched:
@@ -13,14 +14,13 @@ def color_walls(cell, cell_array, color, screen):
             cell.rem_color_right(color, screen)
             cell_array[cell.index+1].rem_color_left(color, screen)
     if not cell.top_wall:
-        if cell_array[cell.index-12].searched:
+        if cell_array[cell.index-24].searched:
             cell.rem_color_top(color, screen)
-            cell_array[cell.index-12].rem_color_bot(color, screen)
+            cell_array[cell.index-24].rem_color_bot(color, screen)
     if not cell.bottom_wall:
-        if cell_array[cell.index+12].searched:
+        if cell_array[cell.index+24].searched:
             cell.rem_color_bot(color, screen)
-            cell_array[cell.index+12].rem_color_top(color, screen)
-
+            cell_array[cell.index+24].rem_color_top(color, screen)
 
 
 def calc_neighbours(v, cell_array, filter):
@@ -30,9 +30,9 @@ def calc_neighbours(v, cell_array, filter):
     if not v.right_wall:
         neighbours.append(cell_array[v.index+1])
     if not v.top_wall:
-        neighbours.append(cell_array[v.index-12])
+        neighbours.append(cell_array[v.index-24])
     if not v.bottom_wall:
-        neighbours.append(cell_array[v.index+12])
+        neighbours.append(cell_array[v.index+24])
 
     if filter:
         neighbours = [i for i in neighbours if not i.searched]
@@ -45,7 +45,7 @@ def calc_neighbours(v, cell_array, filter):
 
 def generate_index(cell, cell_array, index):
     cell_array[cell.index].searchindex = index
-    print(index)
+
 
 def generate_path(cell_array):
     path = []
@@ -88,11 +88,11 @@ def draw_path(path, cell_array, color, screen):
             cell_array[current_cell].rem_color_left(color, screen)
             cell_array[next_cell].rem_color_right(color, screen)
             pass
-        elif difference == 12:
+        elif difference == 24:
             cell_array[current_cell].rem_color_bot(color, screen)
             cell_array[next_cell].rem_color_top(color, screen)
             pass
-        elif difference == -12:
+        elif difference == -24:
             cell_array[current_cell].rem_color_top(color, screen)
             cell_array[next_cell].rem_color_bot(color, screen)
             pass
@@ -112,7 +112,6 @@ def dfs_algo(cell_array, screen):
         pygame.display.flip()
         time.sleep(0.1)
         current.searched = True
-        #print(current.index)
         neighbours = calc_neighbours(current, cell_array, True)
 
 
@@ -125,15 +124,12 @@ def dfs_algo(cell_array, screen):
         pygame.display.flip()
 
         if len(neighbours) == 0:
-            print("Here")
             if current == target:
                 break
             continue
     generate_index(cell_array[-1], cell_array, run+1)
     path = generate_path(cell_array)
-    print(path)
     draw_path(path, cell_array, "BLUE", screen)
-    print("done")
 
 
 

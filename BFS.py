@@ -1,7 +1,6 @@
 import time
 import pygame
 import random
-import sys
 
 def color_walls(cell, cell_array, color, screen):
     if not cell.left_wall:
@@ -13,13 +12,13 @@ def color_walls(cell, cell_array, color, screen):
             cell.rem_color_right(color, screen)
             cell_array[cell.index+1].rem_color_left(color, screen)
     if not cell.top_wall:
-        if cell_array[cell.index-12].searched:
+        if cell_array[cell.index-24].searched:
             cell.rem_color_top(color, screen)
-            cell_array[cell.index-12].rem_color_bot(color, screen)
+            cell_array[cell.index-24].rem_color_bot(color, screen)
     if not cell.bottom_wall:
-        if cell_array[cell.index+12].searched:
+        if cell_array[cell.index+24].searched:
             cell.rem_color_bot(color, screen)
-            cell_array[cell.index+12].rem_color_top(color, screen)
+            cell_array[cell.index+24].rem_color_top(color, screen)
 
 
 
@@ -30,45 +29,48 @@ def calc_neighbours(v, cell_array, filter):
     if not v.right_wall:
         neighbours.append(cell_array[v.index+1])
     if not v.top_wall:
-        neighbours.append(cell_array[v.index-12])
+        neighbours.append(cell_array[v.index-24])
     if not v.bottom_wall:
-        neighbours.append(cell_array[v.index+12])
+        neighbours.append(cell_array[v.index+24])
 
     if filter:
         neighbours = [i for i in neighbours if not i.searched]
 
-
-    #print(neighbours)
     if filter:
         random.shuffle(neighbours) #this to not optimize to current start and goal layout
     return neighbours
 
+
 def generate_index(cell, cell_array, index):
     cell_array[cell.index].searchindex = index
-    print(index)
+
 
 def generate_path(cell_array):
-    path = []
-    path.append(cell_array[0])
+    path = [cell_array[-1]]  # Start from the last cell
 
     visited = set()  # Use a set to keep track of visited cells for quick lookup
-    visited.add(cell_array[0].index)
+    visited.add(cell_array[-1].index)
 
-    while path[-1].index != cell_array[-1].index:
+    while path[-1].index != cell_array[0].index:
         neighbours = calc_neighbours(path[-1], cell_array, False)
 
         # Filter out neighbors that have already been visited
-        neighbours = [n for n in neighbours if n.index not in visited]
+        neighbours = [n for n in neighbours if n.index not in visited and n.searched]
 
         if not neighbours:
             # No valid neighbors found; break the loop
             break
 
-        next_cell = max(neighbours, key=lambda obj: obj.searchindex)
-        path.append(next_cell)
+        # Get the neighbor with the lowest index
+        next_cell = min(neighbours, key=lambda obj: obj.searchindex)
+
+        path.append(next_cell)  # Append this cell to the path
         visited.add(next_cell.index)  # Mark the cell as visited
-    path.append(cell_array[-1])
-    return path
+
+    path.append(cell_array[-1])  # Add the starting cell at the end of the path for completeness
+
+    return path[::-1]  # Reverse the path to go from start to end
+
 
 
 def draw_path(path, cell_array, color, screen):
@@ -88,11 +90,11 @@ def draw_path(path, cell_array, color, screen):
             cell_array[current_cell].rem_color_left(color, screen)
             cell_array[next_cell].rem_color_right(color, screen)
             pass
-        elif difference == 12:
+        elif difference == 24:
             cell_array[current_cell].rem_color_bot(color, screen)
             cell_array[next_cell].rem_color_top(color, screen)
             pass
-        elif difference == -12:
+        elif difference == -24:
             cell_array[current_cell].rem_color_top(color, screen)
             cell_array[next_cell].rem_color_bot(color, screen)
             pass
@@ -102,6 +104,7 @@ def bfs_algo(cell_array, screen):
     current = cell_array[0]
     queue = [current]
     run = 0
+    path = []
 
     while current != target:
         run += 1
@@ -123,12 +126,10 @@ def bfs_algo(cell_array, screen):
         pygame.display.flip()
 
         if len(neighbours) == 0:
-            print("Here")
             if current == target:
                 break
             continue
-    generate_index(cell_array[-1], cell_array, run+1)
+
+    generate_index(cell_array[-1], cell_array, run + 1)
     path = generate_path(cell_array)
-    print(path)
     draw_path(path, cell_array, "BLUE", screen)
-    print("done")
