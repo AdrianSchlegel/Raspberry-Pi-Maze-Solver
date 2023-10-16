@@ -1,37 +1,37 @@
 import pygame
-
+from config import (
+    CELL_SIZE, CELL_WALL_THICKNESS, CELL_BODY_SIZE,
+    CELL_START_SE_WALLS,SCREEN_HEIGHT, SCREEN_WIDTH,
+    CELL_ARRAY_ROW_LENGTH, COLOR_WALLS
+)
 
 class Cell:
+    def draw_body(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0] + CELL_WALL_THICKNESS, self.pos[1] + CELL_WALL_THICKNESS, CELL_BODY_SIZE, CELL_BODY_SIZE))
 
-    def color(self, color, screen):
-        pygame.draw.rect(screen, color, (self.pos[0] + 2, self.pos[1] + 2, 16, 16))
+    def draw_top_wall(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0], self.pos[1], CELL_SIZE, CELL_WALL_THICKNESS))
 
-    def color_searched(self, screen):
-        pygame.draw.rect(screen, "ORANGE", (self.pos[0] + 2, self.pos[1] + 2, 16, 16))
+    def draw_bot_wall(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0], self.pos[1] + CELL_START_SE_WALLS, CELL_SIZE, CELL_WALL_THICKNESS))
 
-    def color_top(self, screen):
-        pygame.draw.rect(screen, "BLACK", (self.pos[0], self.pos[1], 20, 2))
+    def draw_left_wall(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0], self.pos[1], CELL_WALL_THICKNESS, CELL_SIZE))
 
-    def color_bot(self, screen):
-        pygame.draw.rect(screen, "BLACK", (self.pos[0], self.pos[1] + 18, 20, 2))
+    def draw_right_wall(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0] + CELL_START_SE_WALLS, self.pos[1], CELL_WALL_THICKNESS, CELL_SIZE))
 
-    def color_left(self, screen):
-        pygame.draw.rect(screen, "BLACK", (self.pos[0], self.pos[1], 2, 20))
+    def draw_top_opening(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0] + CELL_WALL_THICKNESS, self.pos[1], CELL_BODY_SIZE, CELL_WALL_THICKNESS))
 
-    def color_right(self, screen):
-        pygame.draw.rect(screen, "BLACK", (self.pos[0] + 18, self.pos[1], 2, 20))
+    def draw_bot_opening(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0] + CELL_WALL_THICKNESS, self.pos[1] + CELL_START_SE_WALLS, CELL_BODY_SIZE, CELL_WALL_THICKNESS))
 
-    def rem_color_top(self, color, screen):
-        pygame.draw.rect(screen, color, (self.pos[0]+2, self.pos[1], 16, 2))
+    def draw_left_opening(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0], self.pos[1] + CELL_WALL_THICKNESS, CELL_WALL_THICKNESS, CELL_BODY_SIZE))
 
-    def rem_color_bot(self, color, screen):
-        pygame.draw.rect(screen, color, (self.pos[0]+2, self.pos[1] + 18, 16, 2))
-
-    def rem_color_left(self, color, screen):
-        pygame.draw.rect(screen, color, (self.pos[0], self.pos[1]+2, 2, 16))
-
-    def rem_color_right(self, color, screen):
-        pygame.draw.rect(screen, color, (self.pos[0] + 18, self.pos[1]+2, 2, 16))
+    def draw_right_opening(self, color, screen):
+        pygame.draw.rect(screen, color, (self.pos[0] + CELL_START_SE_WALLS, self.pos[1] + CELL_WALL_THICKNESS, CELL_WALL_THICKNESS, CELL_BODY_SIZE))
 
     def __init__(self, posx, posy, index_input, screen):
         self.left_wall = True
@@ -46,19 +46,19 @@ class Cell:
         self.searchindex = 0
         self.referrer = ""
 
-        if (posy - 20) >= 0:
-            self.adjacent.append(self.index - 24)
+        if (posy - CELL_SIZE) >= 0:
+            self.adjacent.append(self.index - CELL_ARRAY_ROW_LENGTH)
 
-        if (posy + 40) <= 320:
-            self.adjacent.append(self.index + 24)
+        if (posy + 2*CELL_SIZE) <= SCREEN_HEIGHT:
+            self.adjacent.append(self.index + CELL_ARRAY_ROW_LENGTH)
 
-        if (posx - 20) >= 0:
+        if (posx - CELL_SIZE) >= 0:
             self. adjacent.append(self.index - 1)
 
-        if (posx + 40) <= 480:
+        if (posx + 2*CELL_SIZE) <= SCREEN_WIDTH:
             self.adjacent.append(self.index + 1)
 
-        self.color_bot(screen)
-        self.color_left(screen)
-        self.color_right(screen)
-        self.color_top(screen)
+        self.draw_bot_wall(COLOR_WALLS, screen)
+        self.draw_left_wall(COLOR_WALLS, screen)
+        self.draw_right_wall(COLOR_WALLS, screen)
+        self.draw_top_wall(COLOR_WALLS, screen)
